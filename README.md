@@ -25,6 +25,45 @@
 
 ## 快速启动
 
+### 准备工作
+
+#### 1. 克隆主仓库
+```bash
+# 克隆MCP主仓库
+git clone https://github.com/your-username/MCP.git
+cd MCP
+```
+
+#### 2. 初始化和更新子模块
+```bash
+# 初始化子模块
+git submodule update --init --recursive
+
+# 或者一步到位：克隆并初始化子模块
+git clone --recurse-submodules https://github.com/your-username/MCP.git
+cd MCP
+```
+
+#### 3. 同步子模块到最新版本
+```bash
+# 更新所有子模块到最新版本
+git submodule update --remote --recursive
+
+# 或者进入特定子模块目录更新
+cd liberalchang-daily-hot-mcp
+git pull origin main
+cd ..
+```
+
+#### 4. 查看子模块状态
+```bash
+# 查看子模块状态
+git submodule status
+
+# 查看子模块详细信息
+git submodule foreach 'echo $name && git status'
+```
+
 ### Windows环境
 ```cmd
 # 使用管理脚本启动
@@ -181,3 +220,150 @@ pip install -r requirements.txt
 3. **监控告警**: 集成Prometheus/Grafana监控
 4. **备份策略**: 定期备份配置和数据
 5. **安全加固**: 限制网络访问，使用HTTPS
+
+## Git子模块管理
+
+### 子模块结构
+当前项目使用Git子模块管理MCP服务：
+```
+MCP/
+├── .gitmodules              # 子模块配置文件
+├── liberalchang-daily-hot-mcp/  # Daily Hot MCP子模块
+└── ...
+```
+
+### 常用子模块命令
+
+#### 添加新的子模块
+```bash
+# 添加新的MCP服务作为子模块
+git submodule add https://github.com/user/new-mcp-service.git new-mcp-service
+
+# 添加特定分支的子模块
+git submodule add -b develop https://github.com/user/new-mcp-service.git new-mcp-service
+```
+
+#### 更新子模块
+```bash
+# 更新所有子模块到最新提交
+git submodule update --remote
+
+# 更新特定子模块
+git submodule update --remote liberalchang-daily-hot-mcp
+
+# 合并子模块的最新更改
+git submodule foreach git pull origin main
+```
+
+#### 切换子模块分支
+```bash
+# 进入子模块目录
+cd liberalchang-daily-hot-mcp
+
+# 切换到其他分支
+git checkout develop
+
+# 返回主仓库
+cd ..
+
+# 查看子模块状态
+git submodule status
+```
+
+#### 提交子模块更改
+```bash
+# 进入子模块目录进行更改
+cd liberalchang-daily-hot-mcp
+# ... 进行代码更改 ...
+git add .
+git commit -m "更新子模块功能"
+cd ..
+
+# 在主仓库中记录子模块的更新
+git add liberalchang-daily-hot-mcp
+git commit -m "更新Daily Hot MCP子模块版本"
+git push
+```
+
+### 子模块故障排除
+
+#### 1. 子模块处于分离HEAD状态
+```bash
+# 进入子模块目录
+cd liberalchang-daily-hot-mcp
+
+# 检查当前状态
+git status
+
+# 切换到主分支
+git checkout main
+
+# 返回主仓库
+cd ..
+```
+
+#### 2. 子模块目录为空
+```bash
+# 重新初始化子模块
+git submodule deinit -f liberalchang-daily-hot-mcp
+git submodule update --init --recursive liberalchang-daily-hot-mcp
+```
+
+#### 3. 子模块同步问题
+```bash
+# 强制重置子模块
+git submodule foreach git reset --hard
+
+# 清理子模块未跟踪的文件
+git submodule foreach git clean -fd
+```
+
+### 自动化脚本
+
+创建子模块更新脚本 `scripts/update-submodules.sh`：
+```bash
+#!/bin/bash
+echo "更新所有MCP子模块..."
+
+# 更新所有子模块
+git submodule update --remote --recursive
+
+# 检查是否有更新
+if git diff --quiet HEAD; then
+    echo "没有子模块更新"
+else
+    echo "检测到子模块更新，提交更改..."
+    git add .
+    git commit -m "自动更新子模块到最新版本"
+    git push
+    echo "子模块更新已提交"
+fi
+```
+
+### CI/CD集成
+
+在GitHub Actions中自动更新子模块：
+```yaml
+name: Update Submodules
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 每天凌晨2点更新
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: recursive
+      - name: Update submodules
+        run: |
+          git submodule update --remote --recursive
+          if ! git diff --quiet HEAD; then
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git add .
+            git commit -m "Auto update submodules"
+            git push
+          fi
+```
