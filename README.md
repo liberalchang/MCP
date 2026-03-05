@@ -2,6 +2,40 @@
 
 基于Docker的MCP服务统一部署环境，所有MCP服务在同一个Python 3.11容器中运行，适合生产环境使用。
 
+## 📥 快速开始
+
+### 1. 克隆仓库
+```bash
+# 克隆MCP主仓库
+git clone https://github.com/liberalchang/MCP.git
+cd MCP
+
+# 一步到位：克隆并初始化子模块
+git clone --recurse-submodules https://github.com/liberalchang/MCP.git
+cd MCP
+```
+
+### 2. 初始化子模块
+```bash
+# 如果没有使用 --recurse-submodules，手动初始化
+git submodule update --init --recursive
+```
+
+### 3. 启动服务
+```bash
+# Windows
+mcp-manage.bat start
+
+# Linux/Mac
+chmod +x mcp-manage.sh
+./mcp-manage.sh start
+```
+
+### 4. 访问服务
+- Daily Hot MCP: http://localhost:13001/mcp
+
+---
+
 ## 架构特点
 
 - **统一容器**: 所有MCP服务在同一个Python 3.11容器中运行
@@ -24,45 +58,6 @@
    - 访问地址: http://localhost:13001/mcp
 
 ## 快速启动
-
-### 准备工作
-
-#### 1. 克隆主仓库
-```bash
-# 克隆MCP主仓库
-git clone https://github.com/your-username/MCP.git
-cd MCP
-```
-
-#### 2. 初始化和更新子模块
-```bash
-# 初始化子模块
-git submodule update --init --recursive
-
-# 或者一步到位：克隆并初始化子模块
-git clone --recurse-submodules https://github.com/your-username/MCP.git
-cd MCP
-```
-
-#### 3. 同步子模块到最新版本
-```bash
-# 更新所有子模块到最新版本
-git submodule update --remote --recursive
-
-# 或者进入特定子模块目录更新
-cd liberalchang-daily-hot-mcp
-git pull origin main
-cd ..
-```
-
-#### 4. 查看子模块状态
-```bash
-# 查看子模块状态
-git submodule status
-
-# 查看子模块详细信息
-git submodule foreach 'echo $name && git status'
-```
 
 ### Windows环境
 ```cmd
@@ -237,10 +232,10 @@ MCP/
 #### 添加新的子模块
 ```bash
 # 添加新的MCP服务作为子模块
-git submodule add https://github.com/user/new-mcp-service.git new-mcp-service
+git submodule add https://github.com/liberalchang/new-mcp-service.git new-mcp-service
 
 # 添加特定分支的子模块
-git submodule add -b develop https://github.com/user/new-mcp-service.git new-mcp-service
+git submodule add -b develop https://github.com/liberalchang/new-mcp-service.git new-mcp-service
 ```
 
 #### 更新子模块
