@@ -1,0 +1,3 @@
+[submodule "daily-hot-mcp"]
+	path = daily-hot-mcp
+	url = https://github.com/liberalchang/daily-hot-mcp.git

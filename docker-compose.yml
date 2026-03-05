@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # MCP统一服务容器 - 生产环境
+  mcp-services:
+    image: python:3.11-slim
+    container_name: mcp-services
+    working_dir: /app
+    volumes:
+      # 映射所有MCP服务代码
+      - ./liberalchang-daily-hot-mcp:/app/liberalchang-daily-hot-mcp
+      - ./config:/app/config
+      # 映射启动脚本
+      - ./scripts:/app/scripts
+      # 后续可添加更多MCP服务映射
+      # - ./another-mcp-service:/app/another-mcp-service
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    ports:
+      # Daily Hot MCP服务端口
+      - "13001:8000"
+      # 后续可添加更多MCP服务端口
+      # - "13002:8001"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/mcp/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    command: bash /app/scripts/start.sh
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  config-data:
+    driver: local
