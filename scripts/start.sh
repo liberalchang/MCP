@@ -11,6 +11,9 @@ echo "启动时间: $(date)"
 # 确保日志目录存在
 mkdir -p /var/log
 
+# 安装健康检查所需的依赖
+pip install requests
+
 # 函数：启动MCP服务
 start_mcp_service() {
     local service_name=$1
@@ -52,7 +55,7 @@ start_mcp_service() {
 }
 
 # 启动Daily Hot MCP服务
-start_mcp_service "Daily-Hot-MCP" "liberalchang-daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
+start_mcp_service "Daily-Hot-MCP" "daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
 
 # 等待服务启动
 echo "等待服务启动..."
@@ -81,7 +84,7 @@ while true; do
     # 检查关键服务是否还在运行
     if ! pgrep -f "daily_hot_mcp/__main__.py" > /dev/null; then
         echo "[$(date)] 警告: Daily Hot MCP 服务已停止，尝试重启..."
-        start_mcp_service "Daily-Hot-MCP" "liberalchang-daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
+        start_mcp_service "Daily-Hot-MCP" "daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
     fi
     
     # 每分钟输出一次状态

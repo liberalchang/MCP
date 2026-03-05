@@ -109,7 +109,7 @@ mcp-manage.bat health   # 健康检查
 在 `docker-compose.yml` 的 volumes 部分添加：
 ```yaml
 volumes:
-  - ./liberalchang-daily-hot-mcp:/app/liberalchang-daily-hot-mcp
+  - ./daily-hot-mcp:/app/daily-hot-mcp
   - ./config:/app/config
   - ./scripts:/app/scripts
   # 添加新服务映射
@@ -204,7 +204,7 @@ docker exec -it mcp-services bash
 进入容器手动安装依赖：
 ```bash
 docker exec -it mcp-services bash
-cd /app/liberalchang-daily-hot-mcp
+cd /app/daily-hot-mcp
 pip install -r requirements.txt
 ```
 
@@ -223,7 +223,7 @@ pip install -r requirements.txt
 ```
 MCP/
 ├── .gitmodules              # 子模块配置文件
-├── liberalchang-daily-hot-mcp/  # Daily Hot MCP子模块
+├── daily-hot-mcp/  # Daily Hot MCP子模块
 └── ...
 ```
 
@@ -244,7 +244,7 @@ git submodule add -b develop https://github.com/liberalchang/new-mcp-service.git
 git submodule update --remote
 
 # 更新特定子模块
-git submodule update --remote liberalchang-daily-hot-mcp
+git submodule update --remote daily-hot-mcp
 
 # 合并子模块的最新更改
 git submodule foreach git pull origin main
@@ -253,7 +253,7 @@ git submodule foreach git pull origin main
 #### 切换子模块分支
 ```bash
 # 进入子模块目录
-cd liberalchang-daily-hot-mcp
+cd daily-hot-mcp
 
 # 切换到其他分支
 git checkout develop
@@ -268,14 +268,14 @@ git submodule status
 #### 提交子模块更改
 ```bash
 # 进入子模块目录进行更改
-cd liberalchang-daily-hot-mcp
+cd daily-hot-mcp
 # ... 进行代码更改 ...
 git add .
 git commit -m "更新子模块功能"
 cd ..
 
 # 在主仓库中记录子模块的更新
-git add liberalchang-daily-hot-mcp
+git add daily-hot-mcp
 git commit -m "更新Daily Hot MCP子模块版本"
 git push
 ```
@@ -284,12 +284,10 @@ git push
 
 #### 1. 子模块处于分离HEAD状态
 ```bash
-# 进入子模块目录
-cd liberalchang-daily-hot-mcp
-
-# 检查当前状态
-git status
-
+# 或者进入特定子模块目录更新
+cd daily-hot-mcp
+git pull origin main
+cd ..
 # 切换到主分支
 git checkout main
 
@@ -300,8 +298,8 @@ cd ..
 #### 2. 子模块目录为空
 ```bash
 # 重新初始化子模块
-git submodule deinit -f liberalchang-daily-hot-mcp
-git submodule update --init --recursive liberalchang-daily-hot-mcp
+git submodule deinit -f daily-hot-mcp
+git submodule update --init --recursive daily-hot-mcp
 ```
 
 #### 3. 子模块同步问题

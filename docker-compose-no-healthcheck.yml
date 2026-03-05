@@ -25,12 +25,13 @@ services:
     networks:
       - mcp-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/mcp/')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    # 暂时注释掉健康检查，如果需要可以启用
+    # healthcheck:
+    #   test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/mcp/')"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
     command: bash /app/scripts/start.sh
 
 networks:
