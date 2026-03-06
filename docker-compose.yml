@@ -9,7 +9,7 @@ services:
     volumes:
       # 映射所有MCP服务代码
       - ./daily-hot-mcp:/app/daily-hot-mcp
-      - ./config:/app/config
+      - ./config/daily-hot-mcp.env:/app/daily-hot-mcp/.env
       # 映射启动脚本
       - ./scripts:/app/scripts
       # 后续可添加更多MCP服务映射
@@ -26,7 +26,7 @@ services:
       - mcp-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/mcp/')"]
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()"]
       interval: 30s
       timeout: 10s
       retries: 3

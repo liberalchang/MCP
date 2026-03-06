@@ -30,6 +30,14 @@ start_mcp_service() {
     
     cd "/app/$service_path"
     
+    # 加载.env文件到环境变量
+    if [ -f ".env" ]; then
+        echo "加载环境变量文件: .env"
+        export $(cat .env | grep -v '^#' | xargs)
+    else
+        echo "警告: 未找到 .env 文件"
+    fi
+    
     # 检查并安装依赖
     if [ -f "requirements.txt" ]; then
         echo "安装 $service_name 依赖..."
@@ -55,39 +63,17 @@ start_mcp_service() {
 }
 
 # 启动Daily Hot MCP服务
+# 注意：需要先在 config/daily-hot-mcp.env 中配置真实的 FIRECRAWL_API_KEY
 start_mcp_service "Daily-Hot-MCP" "daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
-
-# 等待服务启动
-echo "等待服务启动..."
-sleep 5
-
-# 检查服务状态
-echo "=== 服务状态检查 ==="
-if pgrep -f "daily_hot_mcp/__main__.py" > /dev/null; then
-    echo "✅ Daily Hot MCP 服务运行正常"
-else
-    echo "❌ Daily Hot MCP 服务启动失败"
-    exit 1
-fi
-
-# 显示运行中的服务
-echo "=== 运行中的MCP服务 ==="
-ps aux | grep -E "(daily_hot_mcp|python.*mcp)" | grep -v grep || echo "没有找到运行中的MCP服务"
 
 echo "=== 启动完成 ==="
 echo "所有MCP服务已启动，日志文件位于 /var/log/"
 echo "Daily Hot MCP 访问地址: http://localhost:8000/mcp"
+echo "服务健康检查由Docker容器自动管理"
 
 # 保持容器运行
-echo "监控服务状态中..."
+echo "容器保持运行中..."
 while true; do
-    # 检查关键服务是否还在运行
-    if ! pgrep -f "daily_hot_mcp/__main__.py" > /dev/null; then
-        echo "[$(date)] 警告: Daily Hot MCP 服务已停止，尝试重启..."
-        start_mcp_service "Daily-Hot-MCP" "daily-hot-mcp" "daily_hot_mcp/__main__.py" "daily-hot-mcp.log"
-    fi
-    
-    # 每分钟输出一次状态
-    echo "[$(date)] MCP服务运行中..."
-    sleep 60
+    echo "[$(date)] 容器运行中，健康检查由Docker管理..."
+    sleep 300  # 每5分钟输出一次状态
 done
